@@ -1,14 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <head>
+    <head>
         <!-- comment like this - add - {{title}} -->
-    <title>Planet Finder {{title}}</title>
-    <link rel="stylesheet" href="https://unpkg.com/picnic"/>
-  </head>
-  <body>
-    <h1>Let's Find Some Planets!!!</h1>
-        {% block content %}
-            <p> Content goes here... </p>
-        {% endblock %}
-  </body>
+        <title>Planet Finder {{title}}</title>
+
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+
+    </head>
+    <body>
+    
+        <h1>Let's Find Some Planets!!!</h1>
+        
+        <div class=page>
+
+            {% for table in tables %}
+
+                <h2>{{titles[loop.index]}}</h2>
+            
+                {{ table|safe }}
+            
+                {% endfor %}
+                
+                {{ table|safe }}
+            
+        </div>
+
+    </body>
 </html>
