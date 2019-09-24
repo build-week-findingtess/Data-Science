@@ -9,6 +9,8 @@ from .models import DB, Visual_Table
 
 # fetch TIC IDs from caltech
 def get_data():
+    conn = sqlite.connect(db.sqlite3)
+    cur = conn.cursor()  
     try:
         # Getting labelled TESS Objects of Interest dataframe from Caltech:
         toi = pd.read_csv('https://exofop.ipac.caltech.edu/tess/' + 
@@ -39,20 +41,24 @@ def get_data():
         # Renaming ID column to make this consistent with Caltech TOI dataframe:
         dataproducts = dataproducts.rename(columns={'target_name': 'TIC ID'})
 
-        
-
+    
         # useful_data = dataproducts[['target_name', 'target_name']]
         # # Not sure if the below will work...
         # for row in useful_data:
         #     pair = Visual_Table(tic_id = useful_data['target_name']
         #                         , data_url = useful_data['target_name'])
         #     DB.session.add(pair)
-    except:
-        print('Error importing data')
+    except Exception as e:
+        print('Error importing data: ')
         raise e
     else:
         # Move this df of tuples to sql, be able to more to postgress
-        dataproducts.to_sql(name='all_urls', con=DB.engine, index=False)
+        # df.to_sql(name='all_urls', con=DB.engine, index=False)
+        dataproducts.to_sql(name='all_urls', con=conn, index=False)
+        sqlite.commit()
+        cur.close()
+        conn.close()  
+
 
 
 # eventually we'll need to move towards postgress... EXAMPLE
