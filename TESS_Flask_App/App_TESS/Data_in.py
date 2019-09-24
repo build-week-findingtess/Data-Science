@@ -1,10 +1,13 @@
 import pandas as pd
+from flask_sqlalchemy import SQLAlchemy
 from astroquery.mast import Catalogs, Observations
 from astropy.table import Table
 from tqdm import tqdm
-from astropy.io import fits
-import matplotlib.pyplot as plt
 from .models import DB, Visual_Table
+# from sqlalchemy import create_engine
+
+# DB = SQLAlchemy()
+# engine = create_engine('sqlite://', echo=False)
 
 # Getting labelled TESS Objects of Interest dataframe from Caltech:
 
@@ -23,7 +26,7 @@ def get_data():
 
         # Getting additional data on TESS Objects of Interest from STScI:
         tic_catalog = pd.DataFrame()
-        for tic_id in tqdm(toi['TIC_ID']):
+        for tic_id in tqdm(toi['TIC_ID'].unique()):
             row_data = Catalogs.query_criteria(catalog="Tic", ID=tic_id)
             row_data = row_data.to_pandas()
             tic_catalog = tic_catalog.append(row_data)
@@ -47,9 +50,10 @@ def get_data():
     except Exception as e:
         print('Error importing data: ')
         raise e
-    else:
+
+    return dataproducts.to_sql(name='all_urls', con=DB.engine, if_exists='replace')
         # Move this df of tuples to sql. Also will need to move to postgress
-        dataproducts.to_sql(name='all_urls', con=DB.engine) #, index=False)
+         #, index=False)
 
 
 
