@@ -12,6 +12,7 @@ flask-sqlalchemy = "*"
 requests = "*"
 matplotlib = "*"
 pandas = "*"
+astropy-io = "*"
 numpy = "*"
 astropy = "*"
 
