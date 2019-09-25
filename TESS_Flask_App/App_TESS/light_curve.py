@@ -12,29 +12,33 @@ def get_lightcurve(input_tic):
         # Next line need to become a DB query 
         # urls_for_input = dataproducts[dataproducts['TIC ID'] == input_tic][
         # 'dataURL'].tolist()
-        urls_for_input = DB.query.filter(Visual_Table.TIC_ID == input_tic).tolist()
-
-
-        for url in urls_for_input:
+        try:
+            urls_for_input = Visual_Table.query.filter(Visual_Table.TIC_ID == input_tic) #.tolist()
+        except:
+            print('failed to pull')
         
-            fits_file = ('https://mast.stsci.edu/api/v0.1/Download/file?uri=' + url)
-        
-            print(fits.info(fits_file), "\n")
-            print(fits.getdata(fits_file, ext=1).columns)
-        
-            with fits.open(fits_file, mode="readonly") as hdulist:
-                tess_bjds = hdulist[1].data['TIME']
-                sap_fluxes = hdulist[1].data['SAP_FLUX']
-                pdcsap_fluxes = hdulist[1].data['PDCSAP_FLUX']
-        
-            fig, ax = plt.subplots()
+        else:
+            for url in urls_for_input:
+                
+                fits_file = ('https://mast.stsci.edu/api/v0.1/Download/file?uri=' + url)
+                
+                print(fits.info(fits_file), "\n")
+                print(fits.getdata(fits_file, ext=1).columns)
+                
+                with fits.open(fits_file, mode="readonly") as hdulist:
+                    tess_bjds = hdulist[1].data['TIME']
+                    sap_fluxes = hdulist[1].data['SAP_FLUX']
+                    pdcsap_fluxes = hdulist[1].data['PDCSAP_FLUX']
+                
+                fig, ax = plt.subplots()
 
-            ax.plot(tess_bjds, pdcsap_fluxes, 'ko')
+                ax.plot(tess_bjds, pdcsap_fluxes, 'ko')
 
-            ax.set_ylabel("PDCSAP Flux (e-/s)")
-            ax.set_xlabel("Time (TBJD)")
+                ax.set_ylabel("PDCSAP Flux (e-/s)")
+                ax.set_xlabel("Time (TBJD)")
 
-            plt.show()
+                plt.show()
     except:
-        print('Error ')
-    return
+        print('My Bad')
+
+    # return plt.show()

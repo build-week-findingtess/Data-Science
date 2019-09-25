@@ -15,7 +15,9 @@ from .models import DB, Visual_Table
 # fetch TIC IDs from caltech
 def get_data():
     # Start by emptying the table (maybe make this more elegant later?)
-    Visual_Table.query.delete()
+    # Visual_Table.query.delete()
+    # conn = sqlite.connect(db.sqlite3)
+    # cur = conn.cursor()  
     try:
         # Getting labelled TESS Objects of Interest dataframe from Caltech:
         toi = pd.read_csv('https://exofop.ipac.caltech.edu/tess/' + 
@@ -51,7 +53,9 @@ def get_data():
         print('Error importing data: ')
         raise e
 
-    return dataproducts.to_sql(name='all_urls', con=DB.engine, if_exists='replace')
+    return dataproducts.to_sql(name='Visual_Table', con=DB.engine, index=False, 
+                               if_exists='append', )
+
         # Move this df of tuples to sql. Also will need to move to postgress
          #, index=False)
 
@@ -69,8 +73,7 @@ def get_data():
         #                         , data_url = useful_data['target_name'])
         #     DB.session.add(pair)
 
-        # conn = sqlite.connect(db.sqlite3)
-        # cur = conn.cursor()  
+
         # . . .
         # dataproducts.to_sql(name='all_urls', con=conn, index=False)
         # sqlite.commit()
