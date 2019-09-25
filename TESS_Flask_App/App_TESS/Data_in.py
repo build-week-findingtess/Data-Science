@@ -54,7 +54,7 @@ def get_visual_data():
         raise e
 
     return dataproducts.to_sql(name='Visual_Table', con=DB.engine, index=False, 
-                               if_exists='replace')
+                               if_exists='append')
 
 
 def get_toi_data():
@@ -62,8 +62,9 @@ def get_toi_data():
         # Getting labelled TESS Objects of Interest dataframe from Caltech:
         toi = pd.read_csv('https://exofop.ipac.caltech.edu/tess/' + 
                     'download_toi.php?sort=toi&output=csv')
-    except:
+    except Exception as e:
         print('failed to import initial csv from caltech') 
+        raise e
     try:
         # Isolating columns we want:
         toi = toi[['TIC ID',
@@ -81,19 +82,38 @@ def get_toi_data():
             'Stellar Radius (R_Sun)',
             'TFOPWG Disposition',
             ]]
+        toi.columns = toi.columns.str.replace(' ', '_')
     except:
         print('failed to filter df')
 
     else: 
         toi.to_sql(name='TOI_Table', con=DB.engine, index=False, 
-                               if_exists='replace')
+                               if_exists='append')
         DB.session.commit()
 
+
 def get_tic_catalog():
+    toi = pd.read_csv('https://exofop.ipac.caltech.edu/tess/' + 
+                    'download_toi.php?sort=toi&output=csv')
+    toi = toi[['TIC ID',
+            'TOI',
+            'Epoch (BJD)',
+            'Period (days)',
+            'Duration (hours)',
+            'Depth (mmag)',
+            'Planet Radius (R_Earth)',
+            'Planet Insolation (Earth Flux)',
+            'Planet Equil Temp (K)',
+            'Planet SNR',
+            'Stellar Distance (pc)',
+            'Stellar log(g) (cm/s^2)',
+            'Stellar Radius (R_Sun)',
+            'TFOPWG Disposition',
+            ]]
+    toi.columns = toi.columns.str.replace(' ', '_')
     try:
-        # Getting additional data on TESS Objects of Interest from STScI:
         tic_catalog = pd.DataFrame()
-        for tic_id in tqdm(toi['TIC ID'].unique()):
+        for tic_id in tqdm(toi['TIC_ID'].unique()):
             row_data = Catalogs.query_criteria(catalog="Tic", ID=tic_id)
             row_data = row_data.to_pandas()
             tic_catalog = tic_catalog.append(row_data)
@@ -128,9 +148,10 @@ def get_tic_catalog():
                                 'numcont',
                                 'contratio',
                                 'priority']]
+        tic_catalog.columns = tic_catalog.columns.str.replace(' ', '_')
     except:
             print('failed to filter columns')
     else:
-        toi.to_sql(name='TIC_Cat_Table', con=DB.engine, index=False, 
-                             if_exists='replace')
+        tic_catalog.to_sql(name='TIC_Cat_Table', con=DB.engine, index=False, 
+                             if_exists='append')
         DB.session.commit()
