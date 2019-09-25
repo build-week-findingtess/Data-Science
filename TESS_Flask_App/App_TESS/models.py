@@ -25,8 +25,8 @@ class TOI_Table(DB.Model):
     Planet_SNR = DB.Column(DB.Float)   
     Stellar_Distance = DB.Column(DB.Float)
     Stellar_log_g = DB.Column(DB.Float)
-    Stellar Radius = DB.Column(DB.Float)
-    TFOPWG Disposition = DB.Column(DB.String)
+    Stellar_Radius = DB.Column(DB.Float)
+    TFOPWG_Disposition = DB.Column(DB.String)
     def __repr__(self):
         return '<TOI_Table {}>'.format(self.TIC_ID)
 

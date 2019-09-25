@@ -63,67 +63,74 @@ def get_toi_data():
         toi = pd.read_csv('https://exofop.ipac.caltech.edu/tess/' + 
                     'download_toi.php?sort=toi&output=csv')
     except:
-        print('failed to import initial csv from caltech')
-    else: 
-        try:
-            # Isolating columns we want:
-            toi = toi[['TIC ID',
-                'TOI',
-                'Epoch (BJD)',
-                'Period (days)',
-                'Duration (hours)',
-                'Depth (mmag)',
-                'Planet Radius (R_Earth)',
-                'Planet Insolation (Earth Flux)',
-                'Planet Equil Temp (K)',
-                'Planet SNR',
-                'Stellar Distance (pc)',
-                'Stellar log(g) (cm/s^2)',
-                'Stellar Radius (R_Sun)',
-                'TFOPWG Disposition',
-                ]]
-        except:
-            print('failed to filter df')
+        print('failed to import initial csv from caltech') 
+    try:
+        # Isolating columns we want:
+        toi = toi[['TIC ID',
+            'TOI',
+            'Epoch (BJD)',
+            'Period (days)',
+            'Duration (hours)',
+            'Depth (mmag)',
+            'Planet Radius (R_Earth)',
+            'Planet Insolation (Earth Flux)',
+            'Planet Equil Temp (K)',
+            'Planet SNR',
+            'Stellar Distance (pc)',
+            'Stellar log(g) (cm/s^2)',
+            'Stellar Radius (R_Sun)',
+            'TFOPWG Disposition',
+            ]]
+    except:
+        print('failed to filter df')
 
-    return toi.to_sql(name='TOI_Table', con=DB.engine, index=False, 
+    else: 
+        toi.to_sql(name='TOI_Table', con=DB.engine, index=False, 
                                if_exists='replace')
+        DB.session.commit()
 
 def get_tic_catalog():
-    # Getting additional data on TESS Objects of Interest from STScI:
-    tic_catalog = pd.DataFrame()
-    for tic_id in tqdm(toi['TIC ID'].unique()):
-        row_data = Catalogs.query_criteria(catalog="Tic", ID=tic_id)
-        row_data = row_data.to_pandas()
-        tic_catalog = tic_catalog.append(row_data)
-    tic_catalog = tic_catalog.reset_index(drop=True)
+    try:
+        # Getting additional data on TESS Objects of Interest from STScI:
+        tic_catalog = pd.DataFrame()
+        for tic_id in tqdm(toi['TIC ID'].unique()):
+            row_data = Catalogs.query_criteria(catalog="Tic", ID=tic_id)
+            row_data = row_data.to_pandas()
+            tic_catalog = tic_catalog.append(row_data)
+        tic_catalog = tic_catalog.reset_index(drop=True)
+    except:
+        print('failed to import')
+    try:
+        # Renaming ID column to make this consistent with Caltech TOI dataframe:
+        tic_catalog = tic_catalog.rename(columns={'ID': 'TIC ID'})
 
-    # Renaming ID column to make this consistent with Caltech TOI dataframe:
-    tic_catalog = tic_catalog.rename(columns={'ID': 'TIC ID'})
-
-    # Isolating columns we want:
-    tic_catalog = tic_catalog[['TIC ID',
-                            'ra',
-                            'dec',
-                            'pmRA',
-                            'pmDEC',
-                            'plx',
-                            'gallong',
-                            'gallat',
-                            'eclong',
-                            'eclat',
-                            'Tmag',
-                            'Teff',
-                            'logg',
-                            'MH',
-                            'rad',
-                            'mass',
-                            'rho',
-                            'lum',
-                            'd',
-                            'ebv',
-                            'numcont',
-                            'contratio',
-                            'priority']]
-
-    return toi.to_sql(name='TIC_Cat_Table', con=DB.engine, index=False, 
-                               if_exists='replace')
+        # Isolating columns we want:
+        tic_catalog = tic_catalog[['TIC ID',
+                                'ra',
+                                'dec',
+                                'pmRA',
+                                'pmDEC',
+                                'plx',
+                                'gallong',
+                                'gallat',
+                                'eclong',
+                                'eclat',
+                                'Tmag',
+                                'Teff',
+                                'logg',
+                                'MH',
+                                'rad',
+                                'mass',
+                                'rho',
+                                'lum',
+                                'd',
+                                'ebv',
+                                'numcont',
+                                'contratio',
+                                'priority']]
+    except:
+            print('failed to filter columns')
+    else:
+        toi.to_sql(name='TIC_Cat_Table', con=DB.engine, index=False, 
+                             if_exists='replace')
+        DB.session.commit()
