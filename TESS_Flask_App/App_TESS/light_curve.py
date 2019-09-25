@@ -13,7 +13,7 @@ def get_lightcurve(input_tic):
         # urls_for_input = dataproducts[dataproducts['TIC ID'] == input_tic][
         # 'dataURL'].tolist()
         try:
-            urls_for_input = Visual_Table.query.filter(Visual_Table.TIC_ID == input_tic) #.tolist()
+            urls_for_input = Visual_Table.query.filter(Visual_Table.TIC_ID == input_tic)
         except:
             print('failed to pull')
         
@@ -22,8 +22,8 @@ def get_lightcurve(input_tic):
                 
                 fits_file = ('https://mast.stsci.edu/api/v0.1/Download/file?uri=' + url)
                 
-                print(fits.info(fits_file), "\n")
-                print(fits.getdata(fits_file, ext=1).columns)
+                # print(fits.info(fits_file), "\n")
+                # print(fits.getdata(fits_file, ext=1).columns)
                 
                 with fits.open(fits_file, mode="readonly") as hdulist:
                     tess_bjds = hdulist[1].data['TIME']
@@ -37,8 +37,8 @@ def get_lightcurve(input_tic):
                 ax.set_ylabel("PDCSAP Flux (e-/s)")
                 ax.set_xlabel("Time (TBJD)")
 
-                plt.show()
+                return plt.show()
     except:
-        print('My Bad')
+        print('My Bad. Light Curve function is not working.')
 
     # return plt.show()
