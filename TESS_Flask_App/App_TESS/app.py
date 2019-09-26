@@ -30,5 +30,14 @@ def create_app():
         get_tic_catalog()
         return render_template('home.html', title='Reset Database!')
 
+    @app.route('/test')
+        def get_urls(tic_id):
+        urls = Visual_Table.query.filter_by(TIC_ID=tic_id).all()
+        urls = [url.dataURL for url in urls]
+        return urls
+
+    # @app.route('/details')
+    # def details():
+
     return app
     
