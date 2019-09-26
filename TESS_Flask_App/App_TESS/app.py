@@ -19,7 +19,15 @@ def create_app():
     # Create home route
     @app.route('/')
     def root():
-        return render_template('home.html', title = 'Home')
+
+ 	# Pull example data from Notebooks folder. Will be be pulled from sql DB in the future.
+        data = pd.read_csv('../../Notebooks/tic_catalog_example.csv')
+        data = data.drop(columns ='Unnamed: 0')
+
+        # test_css is the css settings for the table. first item in titles will be ignored because of loop in Home.html
+        return render_template('home.html',tables = data, titles = ['na','Star Dataset'])     
+    return app
+
     
     @app.route('/total_reset')
     def total_reset():
