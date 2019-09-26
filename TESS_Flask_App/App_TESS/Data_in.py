@@ -2,8 +2,8 @@ import pandas as pd
 from flask_sqlalchemy import SQLAlchemy
 from astroquery.mast import Catalogs, Observations
 from astropy.table import Table
-from tqdm import tqdm
-from .models import DB, Visual_Table
+from tqdm import tqdm                       # Will need to remove this througout
+from .models import *
 
 
 # fetch TIC IDs from caltech
@@ -28,7 +28,7 @@ def get_visual_data():
 
         # Getting all dataproducts for TESS Objects of Interest from STScI:
         dataproducts = pd.DataFrame()
-        for tic_id in tqdm(toi['TIC_ID']):
+        for tic_id in tqdm(toi['TIC_ID']):                
             row_data = Observations.query_criteria(obs_collection="TESS",
                                                 target_name=tic_id)
             row_data = row_data.to_pandas()
@@ -42,7 +42,8 @@ def get_visual_data():
     except Exception as e:
         print('Error importing data: ')
         raise e
-    for row in dataproducts:
+    for index, row in dataproducts.iterrows():
+        # print(row[0], row[1])
         new = Visual_Table(TIC_ID=row[0], dataURL=row[1])
         DB.session.add(new)
         DB.session.commit()
@@ -77,8 +78,8 @@ def get_toi_data():
         toi.columns = toi.columns.str.replace(' ', '_')
     except:
         print('failed to filter df')
-    for row in toi:
-        new = Visual_Table(TIC_ID=row[0], 
+    for index, row in toi.iterrows():
+        new = TOI_Table(TIC_ID=row[0], 
                            TOI=row[1],
                            Epoch=row[2],
                            Period=row[3],
@@ -89,9 +90,9 @@ def get_toi_data():
                            Planet_Equil_Temp=row[8],
                            Planet_SNR=row[9],
                            Stellar_Distance=row[10],
-                           Stellar_log_g=row[12],
-                           Stellar_Radius=row[13],
-                           TFOPWG_Disposition=row[14]
+                           Stellar_log_g=row[11],
+                           Stellar_Radius=row[12],
+                           TFOPWG_Disposition=row[13]
                            )
         DB.session.add(new)
         DB.session.commit()
@@ -157,8 +158,8 @@ def get_tic_catalog():
         tic_catalog.columns = tic_catalog.columns.str.replace(' ', '_')
     except:
             print('failed to filter columns')
-    for row in tic_catalog:
-        new = Visual_Table(TIC_ID=row[0],
+    for index, row in tic_catalog.iterrows():
+        new = TIC_Cat_Table(TIC_ID=row[0],
                            ra=row[1],
                            dec=row[2],
                            pmRA=row[3],

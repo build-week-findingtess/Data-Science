@@ -19,5 +19,6 @@ def create_app():
     def root():
         return render_template('home.html', title = 'Home')
     
+
     return app
 
