@@ -19,8 +19,13 @@ def create_app():
     # Create home route
     @app.route('/')
     def root():
-        return render_template('home.html', title = 'Home')
-    
+
+        #Pull example data from Notebooks folder. Will be be pulled from sql DB in the future.
+
+         return render_template('home.html', title = 'Findin Planets:TESS', toi_table=(TOI_Table.query.all()), tic_table=(TIC_Cat_Table.query.all()))     
+    return app
+
+
     @app.route('/total_reset')
     def total_reset():
         DB.drop_all()
