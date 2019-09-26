@@ -35,9 +35,10 @@ def create_app():
         get_tic_catalog()
         return render_template('home.html', title='Reset Database!')
 
-    # @app.route('/predict')
-    # def predict():
-
+    @app.route('/predict')
+    def predict():
+        get_all_predictions()
+        return render_template('home.html', title='prediction pipeline works!')
 
     # @app.route('/test')
     #     def get_urls(tic_id):
