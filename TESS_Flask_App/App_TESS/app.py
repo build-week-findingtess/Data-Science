@@ -20,15 +20,12 @@ def create_app():
     @app.route('/')
     def root():
 
- 	# Pull example data from Notebooks folder. Will be be pulled from sql DB in the future.
-        data = pd.read_csv('../../Notebooks/tic_catalog_example.csv')
-        data = data.drop(columns ='Unnamed: 0')
+        #Pull example data from Notebooks folder. Will be be pulled from sql DB in the future.
 
-        # test_css is the css settings for the table. first item in titles will be ignored because of loop in Home.html
-        return render_template('home.html',tables = data, titles = ['na','Star Dataset'])     
+         return render_template('home.html', title = 'Findin Planets:TESS', toi_table=(TOI_Table.query.all()), tic_table=(TIC_Cat_Table.query.all()))     
     return app
 
-    
+
     @app.route('/total_reset')
     def total_reset():
         DB.drop_all()

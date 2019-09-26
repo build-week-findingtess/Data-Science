@@ -18,18 +18,23 @@
 
 
 <tr>  
- {% for x in tables %}   <th>{{x}}</th>  {% endfor %}  
+  
+<th>TIC Id</th>
+<th>TOI</th>
+<th>Epoch</th>
+<th>Period</th>
+
 </tr>  
 
+{% for toi in toi_table %}
+<tr>
+  <td> <a href="/home/about">{{ toi.TIC_ID }}</a> </td>
+<td>{{ toi.TOI }}</td>
+<td>{{ toi.Epoch }}</td>
+<td>{{ toi.Period }}</td>
+</tr>
+{% endfor %}
 
-  {% for tic in tic_table %}
-          <tr>
-            <td> <a href="{{ tic.TIC_ID }}">{{ tic.TIC_ID }}</a> </td>
-            <td>{{ tic.ra }}</td>
-            <td>{{ tic.rec }}</td>
-            <td>{{ tic.pmRA }}</td>
-          </tr>
-          {% endfor %}
-
+ 
 
 </table> 
