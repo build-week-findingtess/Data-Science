@@ -1,19 +1,22 @@
 import numpy as np
 import pandas as pd
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
+from astropy.io import fits
+from .models import DB, Visual_Table
 import matplotlib.pyplot as plt
 from sqlalchemy import create_engine
 from astropy.io import fits
 
-dataproducts = pd.read_csv('dataproducts_example.csv')
-dataproducts = dataproducts.rename(columns={'TIC ID': 'TIC_ID'})
+# dataproducts = pd.read_csv('dataproducts_example.csv')
+# dataproducts = dataproducts.rename(columns={'TIC ID': 'TIC_ID'})
 
-engine = create_engine('sqlite://', echo=False)
+# engine = create_engine('sqlite://', echo=False)
 
-dataproducts.to_sql('dataproducts', con=engine)
+# dataproducts.to_sql('dataproducts', con=engine)
 
 def get_urls(tic_id):
-    urls = engine.execute("SELECT dataURL FROM dataproducts WHERE TIC_ID =" +
-                          str(tic_id)).fetchall()
+    urls = Visual_Table.query.filter_by(TIC_ID=tic_id).all()
     urls = [url[0] for url in urls]
     return urls
 
@@ -77,14 +80,14 @@ def save_all_lcs(tic_id):
     count = 0
     for lc in get_lcs(get_urls(tic_id)):
         plot_lc(lc)
-        plt.savefig(fname=(str(tic_id) + '_lc_' + str(count)))
+        plt.savefig(fname=(images/(str(tic_id) + '_lc_' + str(count))))
         count += 1
 
 def save_all_dvts(tic_id):
     count = 0
     for dvt in get_dvts(get_urls(tic_id)):
         plot_dvt(dvt)
-        plt.savefig(fname=(str(tic_id) + '_dvt_' + str(count)))
+        plt.savefig(fname=(images/(str(tic_id) + '_dvt_' + str(count))))
         count += 1
         
 # # This TIC has lcs:
@@ -103,11 +106,7 @@ def save_all_dvts(tic_id):
 
 # import numpy as np
 # import pandas as pd
-# from flask_sqlalchemy import SQLAlchemy
-# from sqlalchemy import create_engine
-# from astropy.io import fits
-# import matplotlib.pyplot as plt
-# from .models import DB, Visual_Table
+
 
 # # fetch Light Curve visual and basic data
 # def get_lightcurve(input_tic):

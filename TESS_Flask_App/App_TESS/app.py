@@ -20,3 +20,4 @@ def create_app():
         return render_template('home.html', title = 'Home')
     
     return app
+

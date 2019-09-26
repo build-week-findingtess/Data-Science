@@ -4,20 +4,10 @@ from astroquery.mast import Catalogs, Observations
 from astropy.table import Table
 from tqdm import tqdm
 from .models import DB, Visual_Table
-# from sqlalchemy import create_engine
-
-# DB = SQLAlchemy()
-# engine = create_engine('sqlite://', echo=False)
-
-# Getting labelled TESS Objects of Interest dataframe from Caltech:
 
 
 # fetch TIC IDs from caltech
 def get_visual_data():
-    # Start by emptying the table (maybe make this more elegant later?)
-    # Visual_Table.query.delete()
-    # conn = sqlite.connect(db.sqlite3)
-    # cur = conn.cursor()  
     try:
         # Getting labelled TESS Objects of Interest dataframe from Caltech:
         toi = pd.read_csv('https://exofop.ipac.caltech.edu/tess/' + 
@@ -52,9 +42,11 @@ def get_visual_data():
     except Exception as e:
         print('Error importing data: ')
         raise e
-
-    return dataproducts.to_sql(name='Visual_Table', con=DB.engine, index=False, 
-                               if_exists='append')
+    for row in dataproducts:
+        new = Visual_Table(TIC_ID=row[0], dataURL=row[1])
+        DB.session.add(new)
+        DB.session.commit()
+    return
 
 
 def get_toi_data():
@@ -85,11 +77,25 @@ def get_toi_data():
         toi.columns = toi.columns.str.replace(' ', '_')
     except:
         print('failed to filter df')
-
-    else: 
-        toi.to_sql(name='TOI_Table', con=DB.engine, index=False, 
-                               if_exists='append')
+    for row in toi:
+        new = Visual_Table(TIC_ID=row[0], 
+                           TOI=row[1],
+                           Epoch=row[2],
+                           Period=row[3],
+                           Duration=row[4],
+                           Depth=row[5],
+                           Planet_Radius=row[6],
+                           Planet_Insolation=row[7],
+                           Planet_Equil_Temp=row[8],
+                           Planet_SNR=row[9],
+                           Stellar_Distance=row[10],
+                           Stellar_log_g=row[12],
+                           Stellar_Radius=row[13],
+                           TFOPWG_Disposition=row[14]
+                           )
+        DB.session.add(new)
         DB.session.commit()
+    return
 
 
 def get_tic_catalog():
@@ -151,7 +157,31 @@ def get_tic_catalog():
         tic_catalog.columns = tic_catalog.columns.str.replace(' ', '_')
     except:
             print('failed to filter columns')
-    else:
-        tic_catalog.to_sql(name='TIC_Cat_Table', con=DB.engine, index=False, 
-                             if_exists='append')
+    for row in tic_catalog:
+        new = Visual_Table(TIC_ID=row[0],
+                           ra=row[1],
+                           dec=row[2],
+                           pmRA=row[3],
+                           pmDEC=row[4],
+                           plx=row[5],
+                           gallong=row[6],
+                           gallat=row[7],
+                           eclong=row[8],
+                           eclat=row[9],
+                           Tmag=row[10],
+                           Teff=row[11],
+                           logg=row[12],
+                           MH=row[13],
+                           rad=row[14],
+                           mass=row[15],
+                           rho=row[16],
+                           lum=row[17],
+                           d=row[18],
+                           ebv=row[19],
+                           numcont=row[20],
+                           contratio=row[21],
+                           priority=row[22]
+                          )
+        DB.session.add(new)
         DB.session.commit()
+    return
