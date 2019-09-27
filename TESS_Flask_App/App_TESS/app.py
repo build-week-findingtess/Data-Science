@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from .models import *
 from .light_curve import *
 from .Data_in import *
-from .predict import *
+# from .predict import *
 
 def create_app():
     """create and config an instance of the Flask App"""
