@@ -16,10 +16,6 @@ from .models import DB, TOI_Table, TIC_Cat_Table
 from .models import *
 from .light_curve import *
 from .Data_in import *
-<<<<<<< HEAD
-=======
-#from .predict import *
->>>>>>> master
 
 def create_app():
     """create and config an instance of the Flask App"""
@@ -36,15 +32,7 @@ def create_app():
     def root():
         toi_table=(TOI_Table.query.all())
         #Pull example data from Notebooks folder. Will be be pulled from sql DB in the future.
-<<<<<<< HEAD
-        return render_template('home.html', 
-                                title = 'Findin Planets:TESS', 
-                                toi_table=(TOI_Table.query.all()), 
-                                tic_table=(TIC_Cat_Table.query.all())
-                               )     
-=======
         return render_template('home.html', title = 'Findin Planets:TESS', toi_table=toi_table)     
->>>>>>> master
 
     @app.route('/total_reset')
     def total_reset():
