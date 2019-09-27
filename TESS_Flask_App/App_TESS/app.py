@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from .models import *
 from .light_curve import *
 from .Data_in import *
-# from .predict import *
+#from .predict import *
 
 def create_app():
     """create and config an instance of the Flask App"""
@@ -22,12 +22,9 @@ def create_app():
     # Create home route
     @app.route('/')
     def root():
+        toi_table=(TOI_Table.query.all())
         #Pull example data from Notebooks folder. Will be be pulled from sql DB in the future.
-        return render_template('home.html', 
-                                title = 'Finding Planets:TESS', 
-                                toi_table=(TOI_Table.query.all()), 
-                                tic_table=(TIC_Cat_Table.query.all())
-                               )     
+        return render_template('home.html', title = 'Findin Planets:TESS', toi_table=toi_table)     
 
     @app.route('/total_reset')
     def total_reset():
@@ -38,10 +35,15 @@ def create_app():
         get_tic_catalog()
         return render_template('home.html', title='Reset Database!')
 
+    @app.route('/image')
+    def image():
+        return render_template('image.html', title='Light curve images')
+
+
     @app.route('/predict')
     def predict():
         get_all_predictions()
-        return render_template('home.html', title='prediction pipeline works!')
+        return render_template('predict.html', title='prediction pipeline works!')
 
     # @app.route('/test')
     #     def get_urls(tic_id):
